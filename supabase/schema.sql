@@ -34,7 +34,7 @@ create table if not exists public.submissions (
               ),
 
   -- quoting context — kept small on purpose, all optional
-  storeys     text                 check (storeys is null or storeys in ('1', '2', '3+')),
+  stories     text                 check (stories is null or stories in ('1', '2', '3+')),
   trees       text                 check (trees is null or trees in ('none', 'a-few', 'a-lot')),
   urgency     text                 check (urgency is null or urgency in ('asap', 'this-month', 'just-pricing')),
   notes       text                 check (notes is null or length(notes) <= 2000),
@@ -56,7 +56,7 @@ alter table public.submissions enable row level security;
 --    field on the form MUST be named here or its insert fails with a
 --    permission error and no obvious cause.
 grant insert (
-  name, phone, email, address, services, storeys, trees, urgency, notes, source
+  name, phone, email, address, services, stories, trees, urgency, notes, source
 ) on public.submissions to anon;
 
 -- 3. The one thing an anonymous visitor may do.
@@ -97,7 +97,7 @@ select grantee, privilege_type
  where table_name = 'submissions' and grantee = 'anon';
 
 -- Browse what's come in so far
-select id, created_at, name, phone, email, address, services, storeys, trees,
+select id, created_at, name, phone, email, address, services, stories, trees,
        urgency, left(notes, 80) as notes_preview, source
   from public.submissions
  order by created_at desc;

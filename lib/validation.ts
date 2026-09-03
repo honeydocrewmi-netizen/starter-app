@@ -12,8 +12,8 @@ export const LIMITS = {
 export const SERVICE_OPTIONS = ["gutters", "roof", "yard"] as const;
 export type Service = (typeof SERVICE_OPTIONS)[number];
 
-export const STOREY_OPTIONS = ["1", "2", "3+"] as const;
-export type Storeys = (typeof STOREY_OPTIONS)[number];
+export const STORY_OPTIONS = ["1", "2", "3+"] as const;
+export type Stories = (typeof STORY_OPTIONS)[number];
 
 export const TREE_OPTIONS = ["none", "a-few", "a-lot"] as const;
 export type Trees = (typeof TREE_OPTIONS)[number];
@@ -31,7 +31,7 @@ export type SubmissionInput = {
   email?: string;
   address: string;
   services: string[];
-  storeys?: string;
+  stories?: string;
   trees?: string;
   urgency?: string;
   notes?: string;
@@ -45,7 +45,7 @@ export type ValidatedSubmission = {
   email: string | null;
   address: string;
   services: Service[];
-  storeys: Storeys | null;
+  stories: Stories | null;
   trees: Trees | null;
   urgency: Urgency | null;
   notes: string | null;
@@ -106,7 +106,7 @@ export function validateSubmission(input: SubmissionInput): ValidationResult {
       email: email.length > 0 ? email : null,
       address,
       services,
-      storeys: asEnum(input.storeys, STOREY_OPTIONS),
+      stories: asEnum(input.stories, STORY_OPTIONS),
       trees: asEnum(input.trees, TREE_OPTIONS),
       urgency: asEnum(input.urgency, URGENCY_OPTIONS),
       notes: notes.length > 0 ? notes.slice(0, LIMITS.notes.max) : null,

@@ -5,7 +5,7 @@ import { businessConfig, hasEmail, hasPhone } from "@/lib/business-config";
 import {
   LIMITS,
   SERVICE_OPTIONS,
-  STOREY_OPTIONS,
+  STORY_OPTIONS,
   TREE_OPTIONS,
   URGENCY_OPTIONS,
   validateSubmission,
@@ -22,9 +22,9 @@ const SERVICE_LABELS: Record<Service, string> = {
   yard: "Yard",
 };
 
-const STOREY_LABELS: Record<(typeof STOREY_OPTIONS)[number], string> = {
-  "1": "1 storey",
-  "2": "2 storeys",
+const STORY_LABELS: Record<(typeof STORY_OPTIONS)[number], string> = {
+  "1": "1 story",
+  "2": "2 stories",
   "3+": "3 or more",
 };
 
@@ -98,7 +98,7 @@ export default function QuoteRequestPage() {
       email: data.email,
       address: data.address ?? "",
       services: formData.getAll("services").map(String),
-      storeys: data.storeys,
+      stories: data.stories,
       trees: data.trees,
       urgency: data.urgency,
       notes: data.notes,
@@ -342,20 +342,20 @@ export default function QuoteRequestPage() {
 
           <div className="grid grid-cols-2 gap-3 mb-4">
             <div>
-              <label htmlFor="storeys" className="block text-sm font-semibold mb-1.5">
-                Storeys
+              <label htmlFor="stories" className="block text-sm font-semibold mb-1.5">
+                Stories
               </label>
               <select
-                id="storeys"
-                name="storeys"
+                id="stories"
+                name="stories"
                 defaultValue=""
                 className="w-full px-3 py-2.5 rounded-lg border bg-transparent focus-ring"
                 style={{ borderColor: "var(--line)" }}
               >
                 <option value="">Not sure</option>
-                {STOREY_OPTIONS.map((v) => (
+                {STORY_OPTIONS.map((v) => (
                   <option key={v} value={v}>
-                    {STOREY_LABELS[v]}
+                    {STORY_LABELS[v]}
                   </option>
                 ))}
               </select>
