@@ -324,7 +324,9 @@ export default function QuoteRequestPage() {
             <legend className="block text-sm font-semibold mb-1.5">
               Which service(s)?
             </legend>
-            <div className="grid grid-cols-3 gap-2">
+            {/* Stacked on phones: three across leaves ~2px for the label once
+                the checkbox and icon take their space. Three across from sm up. */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               {SERVICE_OPTIONS.map((s) => (
                 <label key={s} className="chip">
                   <input type="checkbox" name="services" value={s} />
@@ -340,7 +342,7 @@ export default function QuoteRequestPage() {
             )}
           </fieldset>
 
-          <div className="grid grid-cols-2 gap-3 mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
             <div>
               <label htmlFor="stories" className="block text-sm font-semibold mb-1.5">
                 Stories
