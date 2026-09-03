@@ -16,10 +16,14 @@ export const PLACEHOLDER = {
 } as const;
 
 export const businessConfig = {
-  name: "Honey Do Crew",
-  tagline: "Gutters, roofs, and yards — cleared before the leaves pile up.",
+  // Brand is one word on the door hanger: HONEYDO CREW.
+  name: "HoneyDo Crew",
+  tagline: "Ready to tackle your honey-do list.",
   // Shown in the footer once real. Until then, shows the setup banner instead.
-  phone: PLACEHOLDER.phone as string,
+  // Confirmed by the captain 2026-09-03. NOTE: the printed door hanger
+  // currently shows 734-219-4693, which is WRONG and must be corrected
+  // before any print run.
+  phone: "734-709-5172" as string,
   email: PLACEHOLDER.email as string,
   // Single uppercase letter or short initials shown in the logo mark.
   markInitial: "H",
