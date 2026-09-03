@@ -34,9 +34,6 @@ yarn-error.log*
 .env*
 !.env.example
 
-# vercel
-.vercel
-
 # generated QR codes (regenerate with ./make-qr.sh once the production URL exists)
 /qr-output/
 

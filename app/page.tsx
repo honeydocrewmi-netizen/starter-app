@@ -2,10 +2,11 @@
 
 import { useState, type FormEvent } from "react";
 import { businessConfig } from "@/lib/business-config";
-import { LIMITS } from "@/lib/validation";
+import { LIMITS, validateSubmission } from "@/lib/validation";
+import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase-client";
 
 type FieldErrors = Partial<Record<"name" | "email" | "message", string>>;
-type Status = "idle" | "submitting" | "done" | "error";
+type Status = "idle" | "submitting" | "done" | "not-stored" | "error";
 
 export default function ContactPage() {
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -16,28 +17,46 @@ export default function ContactPage() {
     const form = e.currentTarget;
     const data = Object.fromEntries(new FormData(form)) as Record<string, string>;
 
-    const nextErrors: FieldErrors = {};
-    if (!data.name?.trim()) nextErrors.name = "Please enter your name.";
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(data.email ?? "")) {
-      nextErrors.email = "Please enter a valid email address.";
+    // Honeypot: a filled hidden field means a bot. Report success without writing anything.
+    if (typeof data.company === "string" && data.company.trim() !== "") {
+      setStatus("done");
+      return;
     }
-    if (!data.message?.trim()) nextErrors.message = "Please add a short message.";
-    else if (data.message.length > LIMITS.message.max) {
-      nextErrors.message = `Message must be ${LIMITS.message.max} characters or fewer.`;
+
+    const result = validateSubmission({
+      name: data.name ?? "",
+      email: data.email ?? "",
+      message: data.message ?? "",
+      source: data.source,
+    });
+
+    if (!result.ok) {
+      setErrors(result.errors);
+      return;
     }
-    setErrors(nextErrors);
-    if (Object.keys(nextErrors).length > 0) return;
+    setErrors({});
+
+    // No Supabase project exists yet for this POC. Fail honestly rather than
+    // faking a "thanks, we got it" that silently drops the message.
+    if (!isSupabaseConfigured) {
+      setStatus("not-stored");
+      return;
+    }
 
     setStatus("submitting");
     try {
-      const res = await fetch("/api/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) throw new Error("request failed");
+      const supabase = getSupabaseBrowserClient();
+      const { error } = await supabase.from("submissions").insert(result.value);
+      if (error) {
+        console.error("submit: insert failed", error.message);
+        setStatus("error");
+        return;
+      }
       setStatus("done");
-    } catch {
+    } catch (err) {
+      // Covers an unreachable or paused Supabase project along with any other
+      // network failure: never a silent success.
+      console.error("submit: insert threw", err);
       setStatus("error");
     }
   }
@@ -48,6 +67,21 @@ export default function ContactPage() {
         <div className="w-full max-w-lg text-center py-16 px-6">
           <h1 className="text-2xl font-semibold mb-2">Thanks — message received.</h1>
           <p className="text-[var(--muted)]">We&apos;ll be in touch shortly.</p>
+        </div>
+      </main>
+    );
+  }
+
+  if (status === "not-stored") {
+    return (
+      <main className="min-h-dvh flex items-center justify-center p-6 bg-[var(--bg)]">
+        <div className="w-full max-w-lg text-center py-16 px-6">
+          <h1 className="text-2xl font-semibold mb-2">Your message wasn&apos;t stored.</h1>
+          <p className="text-[var(--muted)]">
+            This is a preview of the site — the database isn&apos;t connected yet, so
+            nothing was saved. Please reach us directly for now:{" "}
+            {businessConfig.email || businessConfig.phone}
+          </p>
         </div>
       </main>
     );
