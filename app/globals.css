@@ -1,37 +1,95 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #f7f6f3;
-  --card: #ffffff;
-  --ink: #1a1a1a;
-  --muted: #6b6b6b;
-  --line: #e2e0da;
-  --accent: #1f4d3d;
-  --accent-ink: #ffffff;
-  --err: #b3261e;
+  --bg: #f4ede0;
+  --card: #fffaf1;
+  --ink: #2a231c;
+  --muted: #6e6151;
+  --line: #ddccae;
+  --accent: #b5541f;
+  --accent-ink: #fffaf1;
+  --accent-soft: #f0dcc4;
+  --moss: #5b6b4f;
+  --err: #a1301c;
+  --hero-bg: #2b2018;
+  --hero-ink: #f4ede0;
+  --hero-muted: #cdbfa9;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #151614;
-    --card: #1e201d;
-    --ink: #f0efec;
-    --muted: #a3a19b;
-    --line: #33352f;
-    --accent: #5da684;
-    --accent-ink: #10221b;
+    --bg: #1c1712;
+    --card: #26201a;
+    --ink: #ece2d1;
+    --muted: #a89a83;
+    --line: #453a2c;
+    --accent: #e08a4a;
+    --accent-ink: #201509;
+    --accent-soft: #3a2c1c;
+    --moss: #8ba377;
+    --err: #e28b78;
+    --hero-bg: #14100c;
+    --hero-ink: #f0e6d4;
+    --hero-muted: #b3a48c;
   }
 }
 
 body {
   background: var(--bg);
   color: var(--ink);
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-display), Georgia, serif;
+  font-feature-settings: "ss01" 1;
 }
 
 /* Visible, high-contrast focus ring for keyboard navigation, in both themes. */
 .focus-ring:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 1px;
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
   border-color: transparent;
+}
+
+/* Multi-select service chips: large touch targets, checked state carries
+   the whole chip rather than relying on a small checkbox alone. */
+.chip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1rem;
+  border-radius: 0.9rem;
+  border: 1.5px solid var(--line);
+  background: var(--card);
+  cursor: pointer;
+  transition: border-color 120ms ease, background-color 120ms ease;
+}
+
+.chip:has(input:checked) {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.chip input {
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--accent);
+  flex: none;
+}
+
+.chip svg {
+  flex: none;
+  color: var(--muted);
+}
+
+.chip:has(input:checked) svg {
+  color: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chip {
+    transition: none;
+  }
 }
