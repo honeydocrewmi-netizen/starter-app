@@ -53,48 +53,38 @@ wasn't stored"** screen — that's expected and correct. It means the form,
 validation, and honeypot spam check all work; the only missing piece is
 somewhere to save the message. That's step 4.
 
-## 4. Add Supabase (the database), when you're ready
+## 4. Add Supabase (the database)
 
-1. Go to [supabase.com](https://supabase.com) and sign up (free).
-2. Click **New project**. Give it a name, set a database password (save it
-   somewhere — a password manager, not a sticky note), and pick a region
-   close to you. Wait ~2 minutes for it to finish setting up.
-3. In your new project, click **SQL Editor** in the left sidebar. Open the
-   file `supabase/schema.sql` from this folder, select all of it, and paste
-   it into the SQL editor.
-4. **Before running it**, find the line near the top that says
-   `-- Retention: <<DECIDE AND WRITE IT HERE>>` and replace it with a real
-   answer — for example "delete after 90 days" or "keep indefinitely". This
-   is a real decision about how long you keep people's contact info; don't
-   skip it.
-5. Click **Run**. You should see several result panels — the last few are
-   verification checks. Nothing should show an error.
-6. Get your keys: **Project Settings** (gear icon) → **API**. You'll need:
-   - **Project URL** (looks like `https://abcdefgh.supabase.co`)
-   - The **publishable key** (starts with `sb_publishable_` — **not** the
-     "secret" key; never use that one anywhere in this project)
-7. In the GitHub repo, go to **Settings → Secrets and variables → Actions →
-   Variables** and add two **repository variables** (not secrets — this key
-   is designed to be public; see "Why a browser-direct database write is
-   safe" below):
-   | Name | Value |
-   |---|---|
-   | `SUPABASE_URL` | the Project URL from step 6 |
-   | `SUPABASE_PUBLISHABLE_KEY` | the publishable key from step 6 |
-8. Re-run the "Deploy to GitHub Pages" workflow from the **Actions** tab (or
-   push any small change to `main`) so the site rebuilds with the database
-   connected.
-9. **Handle the pausing problem:** Supabase's free database pauses itself
-   after 7 days with no activity, and only a person clicking a button in the
-   dashboard can wake it back up. This repo includes a daily automatic
-   "keepalive" GitHub Actions workflow (`.github/workflows/keepalive.yml`)
-   that pings the database once a day to prevent that — nothing for you to
-   set up, it starts working as soon as the two repository variables above
-   exist. It's a free workaround, not a guarantee, so check in on the site
-   occasionally. (Supabase Pro at $25/month removes the pausing behavior
-   completely, if you'd rather not think about it.)
-10. Submit the live form again. You should see "Thanks — message received."
-    Check Supabase's **Table Editor → submissions** to see it arrive.
+**The project is already connected in code.** `supabase/config.json` holds the
+project URL and publishable key, and both `lib/supabase-client.ts` and
+`scripts/keepalive.mjs` read that one file — so there are no repository
+variables to set and no dashboard state to remember. (The `NEXT_PUBLIC_*` env
+vars still override it, so a fork can point at its own project without editing
+code.)
+
+**What's left is creating the table.** Until you do this, the form validates
+correctly and then shows the honest "your message wasn't stored" screen.
+
+1. Open your Supabase project → **SQL Editor** in the left sidebar.
+2. Open `supabase/schema.sql` from this folder, select all of it, paste it in,
+   and click **Run**.
+3. Scroll through the result panels. The last few are verification checks —
+   confirm RLS is on, that there's exactly one insert-only policy for `anon`,
+   and that the "anon holds NO table-level privilege" query returns **no rows**.
+4. Submit the live form. You should get "Got it — thanks." Then check
+   **Table Editor → submissions** to see the row arrive.
+
+**Retention is set to 90 days** (recorded at the top of `schema.sql`). That's a
+promise, not a note: run the cleanup query at the bottom of that file from the
+SQL editor periodically — monthly is plenty at this scale. It previews what
+would be deleted before you delete anything.
+
+**The pausing problem:** Supabase's free database pauses itself after 7 days
+with no activity, and only a person clicking a button in the dashboard can wake
+it. `.github/workflows/keepalive.yml` pings it daily to prevent that, and works
+automatically now that `supabase/config.json` names a project. It's a free
+workaround, not a guarantee, so check on the site occasionally. (Supabase Pro
+at $25/month removes the pausing behavior entirely.)
 
 ## 5. Generate your QR code
 

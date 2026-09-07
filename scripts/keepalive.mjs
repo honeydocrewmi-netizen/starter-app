@@ -3,13 +3,20 @@
 // the Vercel cron this repo used to have. A free Supabase project pauses
 // after a week with no activity; this keeps "a few requests a day" flowing.
 //
-// No Supabase project exists yet for this POC, so this is a deliberate no-op
-// until SUPABASE_URL / SUPABASE_PUBLISHABLE_KEY are set as repo variables —
-// it must NOT fail noisily every day before the project exists.
+// Reads supabase/config.json, so it works as soon as that file names a project.
+// It stays a quiet no-op if that config is somehow empty — it must NOT fail
+// noisily every day.
+import { readFileSync } from "node:fs";
 import { createClient } from "@supabase/supabase-js";
 
-const url = process.env.SUPABASE_URL;
-const key = process.env.SUPABASE_PUBLISHABLE_KEY;
+// Same committed source of truth the app uses (see lib/supabase-client.ts), so
+// the URL and key are defined exactly once in this repo. Env vars still win,
+// which keeps a fork able to point at its own project via repo variables.
+const configPath = new URL("../supabase/config.json", import.meta.url);
+const config = JSON.parse(readFileSync(configPath, "utf8"));
+
+const url = process.env.SUPABASE_URL?.trim() || config.url;
+const key = process.env.SUPABASE_PUBLISHABLE_KEY?.trim() || config.publishableKey;
 
 if (!url || !key) {
   console.log("keepalive: Supabase not configured yet — no-op.");

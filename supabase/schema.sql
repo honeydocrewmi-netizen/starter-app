@@ -1,10 +1,11 @@
 -- =====================================================================
 -- submissions: anonymous, insert-only quote-request target for the QR page
 --
--- Retention: <<DECIDE AND WRITE IT HERE>> — e.g. "delete after 90 days",
--- "keep indefinitely", "delete after the event this QR was printed for".
--- Whatever you pick, actually do it: a dated `delete` you run by hand from
--- the SQL editor below is fine at this scale.
+-- Retention: DELETE AFTER 90 DAYS. Long enough to quote a job, follow up,
+-- and handle a callback; short enough that this table never becomes a
+-- standing list of local names, phone numbers and home addresses.
+-- Decided 2026-09-07. This is a promise, not a note — run the cleanup query
+-- at the bottom of this file periodically (monthly is plenty at this scale).
 --
 -- Do NOT add: passwords, ID numbers, payment data, health data, precise
 -- location, or a unique index on any personal column (see the note on
@@ -101,3 +102,17 @@ select id, created_at, name, phone, email, address, services, stories, trees,
        urgency, left(notes, 80) as notes_preview, source
   from public.submissions
  order by created_at desc;
+
+-- =====================================================================
+-- Retention cleanup — the 90-day promise at the top of this file.
+-- Run this from the SQL editor periodically; monthly is plenty here.
+-- =====================================================================
+
+-- Preview what would go, first. If this looks wrong, do NOT run the delete.
+select count(*) as rows_to_delete, min(created_at) as oldest
+  from public.submissions
+ where created_at < now() - interval '90 days';
+
+-- Then actually delete them.
+delete from public.submissions
+ where created_at < now() - interval '90 days';
