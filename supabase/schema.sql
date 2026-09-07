@@ -50,7 +50,19 @@ create index if not exists submissions_created_at_idx
 -- 1. Deny by default.
 alter table public.submissions enable row level security;
 
--- 2. Explicitly expose the table to the Data API. Required on every project
+-- 2a. Drop Supabase's default grants FIRST. A new Supabase project grants
+--     anon and authenticated full table-level privileges (select, insert,
+--     update, delete, truncate, references, trigger) on everything in the
+--     public schema. The column-scoped grant below ADDS to those defaults, it
+--     does not replace them — so without this revoke, anon keeps table-wide
+--     select/update/delete and only RLS stands between the public and every
+--     row. Verified on a real project 2026-09-07: the "expect: no rows" check
+--     below returned all seven privileges until this ran.
+--     `authenticated` is included because this app never signs anyone in;
+--     postgres and service_role keep their grants for dashboard/server use.
+revoke all on public.submissions from anon, authenticated;
+
+-- 2b. Explicitly expose the table to the Data API. Required on every project
 --    created after 2026-05-30 (and on ALL projects after 2026-10-30) —
 --    Supabase no longer auto-exposes public tables. Column-scoped: the
 --    anonymous visitor may write these columns and nothing else. Every
@@ -92,10 +104,12 @@ select grantee, privilege_type, column_name
  where table_name = 'submissions' and grantee = 'anon'
  order by column_name;
 
--- anon holds NO table-level privilege (select/update/delete) -- expect: no rows
+-- anon and authenticated hold NO table-level privilege -- expect: no rows.
+-- If this returns rows, step 2a's revoke did not run: the table is protected
+-- by RLS alone, and disabling RLS would expose every row. Fix before going live.
 select grantee, privilege_type
   from information_schema.table_privileges
- where table_name = 'submissions' and grantee = 'anon';
+ where table_name = 'submissions' and grantee in ('anon', 'authenticated');
 
 -- Browse what's come in so far
 select id, created_at, name, phone, email, address, services, stories, trees,
