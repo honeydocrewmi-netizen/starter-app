@@ -217,28 +217,23 @@ Squarespace ones, you're ready for 7c.
    an hour), then **tick it**. Don't skip this — without it the site is
    reachable over plain HTTP.
 
-### 7d. Flip the build over to the domain
+### 7d. Nothing to flip — it's in the code
 
-The site is still being *built* for the `/starter-app` subpath. One variable
-changes that:
+The domain is baked in, so there's no repository variable to set and no
+build-time switch:
 
-1. **Settings → Secrets and variables → Actions → Variables → New repository
-   variable**:
-   | Name | Value |
-   |---|---|
-   | `SITE_DOMAIN` | `honeydocrewservices.com` (bare hostname, no `https://`, no trailing slash) |
-2. Re-run the **"Deploy to GitHub Pages"** workflow from the **Actions** tab.
+- `next.config.ts` has **no `basePath`** — the site builds for the domain root.
+- `public/CNAME` contains `honeydocrewservices.com`, and static export copies
+  `public/` into `out/`, so every deploy republishes `out/CNAME` automatically.
+  That file is what keeps GitHub Pages attached to the domain; each Actions
+  deploy replaces the whole site, so without it the custom domain would be
+  dropped on the next push.
 
-Why this exists: `basePath` is baked into the JavaScript at build time and
-can't be decided per-request, so the subpath build and the domain build are
-genuinely different builds. Keeping both selectable means the current
-`github.io` address stays working the whole time you're waiting on DNS —
-nothing is broken in between. Setting `SITE_DOMAIN` also makes the deploy
-write the `CNAME` file that GitHub Pages needs to keep the custom domain
-attached across future deploys.
+Both facts live in version control, which means a fresh clone deploys to the
+right place with no dashboard state to remember.
 
-3. Open `https://honeydocrewservices.com` and confirm the page loads with styling
-   intact and the form submits.
+To move to a *different* domain later: change `public/CNAME`, update Settings →
+Pages → Custom domain, and repoint DNS. Those three have to agree.
 
 **Now** go do step 5 and generate the QR code.
 
