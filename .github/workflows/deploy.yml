@@ -32,7 +32,25 @@ jobs:
           # at build time -> the app builds and serves its not-configured state.
           NEXT_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+          # Absent -> build for the github.io/starter-app subpath. Set to a
+          # bare hostname (e.g. honeydocrewservices.com) -> build for that domain's
+          # root. See next.config.ts and README "7. Move to a real domain".
+          SITE_DOMAIN: ${{ vars.SITE_DOMAIN }}
         run: npm run build
+      - name: Write CNAME for the custom domain
+        # GitHub Pages takes the custom domain from a CNAME file at the root of
+        # the published artifact. Deploying from Actions replaces the whole
+        # site each run, so without this the domain setting gets dropped on the
+        # next deploy. No SITE_DOMAIN -> no CNAME -> plain github.io hosting.
+        env:
+          SITE_DOMAIN: ${{ vars.SITE_DOMAIN }}
+        run: |
+          if [ -n "$SITE_DOMAIN" ]; then
+            echo "$SITE_DOMAIN" > out/CNAME
+            echo "CNAME -> $SITE_DOMAIN"
+          else
+            echo "SITE_DOMAIN not set; publishing to the github.io subpath."
+          fi
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

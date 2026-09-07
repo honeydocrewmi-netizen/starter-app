@@ -1,4 +1,4 @@
-# Contact form + QR code — setup guide (GitHub Pages proof of concept)
+# Contact form + QR code — setup guide (GitHub Pages)
 
 This is a one-page "contact us" website. Someone scans a QR code, fills in a
 short form, and — once you've added a database (step 4 below) — the message
@@ -7,12 +7,12 @@ form still works and looks right, but submitted messages are not saved
 anywhere.** This guide walks through the two settings you need to flip and,
 later, how to add the database. It should take about **5 minutes** today.
 
-**This is a proof of concept, not the final site:**
+**Until you finish step 7, this is a proof of concept, not the final site:**
 
 - It's hosted at a free `github.io` address, not a real domain.
 - Nothing should be printed from this URL yet. **A static QR code can't be
-  repointed** — once you print it, that address is permanent. Get a real
-  domain first if you plan to put this in front of customers.
+  repointed** — once you print it, that address is permanent. Do step 7 (buy
+  a domain) before you put this in front of customers.
 - There's no database behind it yet, so submitted messages aren't stored
   until you do step 4.
 
@@ -98,10 +98,12 @@ somewhere to save the message. That's step 4.
 
 ## 5. Generate your QR code
 
-On a computer with this project's code:
+**Do step 7 first.** The QR code should encode your real domain, because the
+printed code can never be changed afterward. The command below takes whatever
+address you give it — pass your domain, not the `github.io` one:
 
 ```bash
-./make-qr.sh https://honeydocrewmi-netizen.github.io/starter-app/
+./make-qr.sh https://honeydocrewservices.com/
 ```
 
 This creates two files in a new `qr-output` folder:
@@ -112,11 +114,10 @@ This creates two files in a new `qr-output` folder:
 The script automatically checks that the code actually scans back to the
 right address before it finishes. If it prints "OK", the code is correct.
 
-**Do not print this code yet.** This is a `github.io` proof-of-concept
-address, not a permanent one — see the warning at the top of this file.
-When this is ready for real customers, buy a real domain, point it at this
-site (or move to real hosting), and generate a new QR code for that
-permanent address instead.
+**Only print a code generated from your real domain.** If you generated one
+from the `github.io` address to test the workflow, throw it away — that
+address is a proof-of-concept URL, not a permanent one, and a printed QR
+code pointing at it can't be repointed later. See step 7.
 
 ## 6. Why a browser-direct database write is safe here
 
@@ -136,6 +137,111 @@ same file are a second, independent backstop — even a bug in this app's own
 validation code can't write a row the database itself considers malformed.
 Nothing about moving to the browser weakens either of those.
 
+## 7. Move to a real domain
+
+This is the step that turns the proof of concept into the real site. It's
+also the one that has to happen **before you print anything**.
+
+The code is already set up for both addresses at once. Everything below is a
+purchase, some DNS records, and one repository variable — no code changes.
+
+### 7a. The domain
+
+**Registered: `honeydocrewservices.com`** (Squarespace Domains, 2026-09-07,
+renews 2027-09-07). DNS is managed in the Squarespace dashboard, not at the
+registrar's competitors — that's where step 7b happens.
+
+`honeydocrew.com` was not available: it's held by a domain investor and listed
+for sale through Afternic (GoDaddy's resale arm). If it ever becomes cheap
+enough to be worth ending the type-in confusion, buying it and 301-redirecting
+it here is the upgrade path. Nothing below has to change to do that later.
+
+> Squarespace applies a 60-day ICANN transfer lock to new registrations
+> (`clientTransferProhibited`), so the domain can't move to another registrar
+> until roughly 2026-11-06. This doesn't block anything here — GitHub Pages
+> only needs the DNS records, not the registrar.
+
+### 7b. Point the DNS at GitHub (in Squarespace)
+
+Squarespace → **Domains** → `honeydocrewservices.com` → **DNS** → **DNS
+Settings**.
+
+**First, remove the defaults.** A fresh Squarespace domain ships pointing at
+Squarespace's own parking servers, and those records will fight yours. Delete:
+
+- the four `A` records on `@` pointing to `198.185.159.x` / `198.49.23.x`
+- the `CNAME` on `www` pointing to `ext-sq.squarespace.com`
+
+**Then add these five records:**
+
+| Type | Host | Value |
+|---|---|---|
+| `A` | `@` | `185.199.108.153` |
+| `A` | `@` | `185.199.109.153` |
+| `A` | `@` | `185.199.110.153` |
+| `A` | `@` | `185.199.111.153` |
+| `CNAME` | `www` | `honeydocrewmi-netizen.github.io.` |
+
+The four IPv4 addresses are GitHub's Pages servers — verified live on
+2026-09-07. All four are needed; they're redundant servers, not alternatives.
+`@` means the bare domain itself.
+
+> The `www` CNAME points at the repo owner's Pages host —
+> `honeydocrewmi-netizen.github.io.` — *not* at the custom domain. If the repo
+> is ever moved to another account or an organization, this one record has to
+> be updated to match; the four `A` records are GitHub-wide and never change.
+
+DNS propagation takes anywhere from a few minutes to a few hours. Check with:
+
+```bash
+dig +short honeydocrewservices.com
+```
+
+When that prints the four `185.199.*` addresses instead of the `198.*`
+Squarespace ones, you're ready for 7c.
+
+### 7c. Tell GitHub about the domain
+
+> **Who does this:** steps 7c and 7d change repo **Settings**, so they must be
+> performed while signed in as `honeydocrewmi-netizen`, the repo owner. The
+> repo lives on a personal account, and personal repos have no admin
+> collaborator role — collaborators max out at write (push) access — so these
+> two steps cannot be delegated to anyone else.
+
+1. Repo **Settings → Pages → Custom domain**. Type the bare domain
+   (`honeydocrewservices.com`, no `https://`) and click **Save**.
+2. GitHub runs a DNS check. If it fails, DNS hasn't propagated yet — wait and
+   click Save again.
+3. Wait for the **"Enforce HTTPS"** checkbox to become clickable (GitHub is
+   issuing a free certificate; this usually takes minutes but can take up to
+   an hour), then **tick it**. Don't skip this — without it the site is
+   reachable over plain HTTP.
+
+### 7d. Flip the build over to the domain
+
+The site is still being *built* for the `/starter-app` subpath. One variable
+changes that:
+
+1. **Settings → Secrets and variables → Actions → Variables → New repository
+   variable**:
+   | Name | Value |
+   |---|---|
+   | `SITE_DOMAIN` | `honeydocrewservices.com` (bare hostname, no `https://`, no trailing slash) |
+2. Re-run the **"Deploy to GitHub Pages"** workflow from the **Actions** tab.
+
+Why this exists: `basePath` is baked into the JavaScript at build time and
+can't be decided per-request, so the subpath build and the domain build are
+genuinely different builds. Keeping both selectable means the current
+`github.io` address stays working the whole time you're waiting on DNS —
+nothing is broken in between. Setting `SITE_DOMAIN` also makes the deploy
+write the `CNAME` file that GitHub Pages needs to keep the custom domain
+attached across future deploys.
+
+3. Open `https://honeydocrewservices.com` and confirm the page loads with styling
+   intact and the form submits.
+
+**Now** go do step 5 and generate the QR code.
+
 ## If something breaks
 
 - **Form always says "wasn't stored"**: the two repository variables in
@@ -151,3 +257,16 @@ Nothing about moving to the browser weakens either of those.
 - **Environment variables changed**: after changing a repository variable,
   re-run the deploy workflow — it only reads them at build time, so nothing
   updates until the next build.
+- **Custom domain loads but has no styling**: the `SITE_DOMAIN` repository
+  variable isn't set, so the site was built for the `/starter-app` subpath
+  and every asset path is wrong for the domain root. Do step 7d.
+- **Custom domain 404s / "There isn't a GitHub Pages site here"**: DNS hasn't
+  propagated, or Settings → Pages → Custom domain is empty. Check
+  `dig +short yourdomain.com` returns the four `185.199.*` addresses.
+- **Custom domain reverted to blank after a deploy**: `SITE_DOMAIN` isn't set,
+  so no `CNAME` file was published. Each Actions deploy replaces the whole
+  site, and GitHub reads the custom domain from that file. Do step 7d.
+- **HTTPS warning in the browser**: "Enforce HTTPS" (step 7c.3) isn't ticked
+  yet, or the certificate is still being issued. Wait, then tick it.
+- **Cloudflare users — redirect loop or certificate error**: the DNS records
+  are proxied. Set them to "DNS only" (grey cloud, not orange).
