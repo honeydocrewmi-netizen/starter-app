@@ -1,7 +1,13 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { businessConfig, hasEmail, hasPhone } from "@/lib/business-config";
+import {
+  businessConfig,
+  hasEmail,
+  hasPhone,
+  isEmailUnset,
+  isPhoneUnset,
+} from "@/lib/business-config";
 import {
   LIMITS,
   SERVICE_OPTIONS,
@@ -76,9 +82,17 @@ export default function QuoteRequestPage() {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [status, setStatus] = useState<Status>("idle");
 
-  const missingSetup = [!hasPhone() && "a phone number", !hasEmail() && "an email address"].filter(
-    (v): v is string => Boolean(v),
-  );
+  // Deliberately NOT `!hasPhone() / !hasEmail()`. A field the owner has
+  // answered with "we don't have one" (null) is finished, and nagging a
+  // customer about it on a live page is worse than the missing value —
+  // this banner is addressed to whoever is setting the site up, so it must
+  // only appear while something is genuinely still unanswered. HoneyDo Crew
+  // has no email on purpose, and a page with a working phone number and a
+  // quote form is complete without one.
+  const missingSetup = [
+    isPhoneUnset() && "a phone number",
+    isEmailUnset() && "an email address",
+  ].filter((v): v is string => Boolean(v));
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();

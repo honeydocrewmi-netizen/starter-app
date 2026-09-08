@@ -46,6 +46,20 @@ touch to make the site say your business's name instead of "Your Business
 Name". Change the name, tagline, phone, and email, then push to `main` —
 the site rebuilds automatically.
 
+Each contact field has three possible states, and the difference matters:
+
+| Value | Meaning | What the page does |
+|---|---|---|
+| a real value | you have one | shows it in the footer |
+| `null` | you genuinely don't have one | omits it silently |
+| `PLACEHOLDER.*` | you haven't decided yet | shows the setup banner |
+
+The setup banner is addressed to whoever is building the site, not to
+customers — so it appears only while a field is still *unanswered*. Answering
+"we don't have an email" with `null` is a finished answer and the banner goes
+away. HoneyDo Crew's email is `null` for exactly that reason: the business
+runs on phone calls and this form.
+
 ## 3. Try it with no database yet
 
 Open the live URL and submit the form. You'll see an honest **"Your message
