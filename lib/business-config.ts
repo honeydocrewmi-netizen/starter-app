@@ -24,13 +24,11 @@ export const businessConfig = {
   // currently shows 734-219-4693, which is WRONG and must be corrected
   // before any print run.
   phone: "734-709-5172" as string,
-  // `null` means this business genuinely has no email address — a deliberate
-  // answer, not an unfinished one. The page then omits email everywhere
-  // silently. Leave it as PLACEHOLDER.email only while the answer is still
-  // unknown; that is what triggers the setup banner. HoneyDo Crew runs on
-  // phone calls and the quote form, so this is null on purpose as of
-  // 2026-09-07. Set it to a real address to show it in the footer.
-  email: null as string | null,
+  // `null` would mean this business genuinely has no email address — a
+  // deliberate answer, not an unfinished one — and the page would omit email
+  // everywhere silently. PLACEHOLDER.email means the answer is still unknown
+  // and raises the setup banner. Answered 2026-09-11.
+  email: "honeydocrewmi@gmail.com" as string | null,
   // Single uppercase letter or short initials shown in the logo mark.
   markInitial: "H",
 };
