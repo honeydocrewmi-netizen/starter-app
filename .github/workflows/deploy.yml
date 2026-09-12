@@ -25,13 +25,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Build static export
-        env:
-          # Both are repository VARIABLES, not secrets: the publishable key is
-          # designed to end up in the public bundle (see README "Add Supabase
-          # later"). Absent -> NEXT_PUBLIC_SUPABASE_URL/KEY are empty strings
-          # at build time -> the app builds and serves its not-configured state.
-          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+        # Use the owner project in supabase/config.json.
         run: npm run build
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

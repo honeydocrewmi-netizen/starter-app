@@ -1,3 +1,15 @@
+# Current owner setup
+
+The app now targets the owner’s Supabase project `cqvsrrbsmvuecwjyggud`.
+Submissions are saved in `public.submissions` and trigger email notifications to
+`honeydocrewmi@gmail.com`. See [notification setup and operations](supabase/NOTIFICATIONS.md)
+for deployment, secrets, verification, and delivery limitations.
+
+The original setup guide below contains historical instructions (including references
+to an unconnected database); use the current setup document for database and email work.
+
+---
+
 # Contact form + QR code — setup guide (GitHub Pages)
 
 This is a one-page "contact us" website. Someone scans a QR code, fills in a

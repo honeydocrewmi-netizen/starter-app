@@ -16,7 +16,5 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Ping Supabase (no-op if not configured yet)
-        env:
-          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
-          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+        # Use the owner project committed in supabase/config.json.
         run: node scripts/keepalive.mjs
