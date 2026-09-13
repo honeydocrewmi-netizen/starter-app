@@ -15,8 +15,9 @@ const bodyFont = Public_Sans({
 });
 
 export const metadata: Metadata = {
-  title: `Get a quote — ${businessConfig.name}`,
-  description: businessConfig.tagline,
+  metadataBase: new URL("https://honeydocrewservices.com"),
+  title: `${businessConfig.name} | Gutter, Roof & Yard Cleanup`,
+  description: "Gutter cleaning, roof debris removal, and yard cleanup in Livonia, Farmington, Westland, Northville, Plymouth, and Novi.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

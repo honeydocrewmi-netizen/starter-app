@@ -22,12 +22,6 @@ import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase-c
 type FieldErrors = Partial<Record<"name" | "phone" | "email" | "address" | "services", string>>;
 type Status = "idle" | "submitting" | "done" | "not-stored" | "error";
 
-const SERVICE_LABELS: Record<Service, string> = {
-  gutters: "Gutters",
-  roof: "Roof",
-  yard: "Yard",
-};
-
 const STORY_LABELS: Record<(typeof STORY_OPTIONS)[number], string> = {
   "1": "1 story",
   "2": "2 stories",
@@ -184,8 +178,19 @@ export default function QuoteRequestPage() {
   }
 
   return (
-    <main className="min-h-dvh flex flex-col items-center p-4 sm:p-6 bg-[var(--bg)]">
-      <div className="w-full max-w-lg">
+    <main className="site-shell">
+      <div className="topbar">
+        <a className="wordmark" href="#top" aria-label="HoneyDo Crew home">
+          <span className="wordmark-icon" aria-hidden="true">H</span>
+          <span><strong>HoneyDo</strong><small>Crew</small></span>
+        </a>
+        <div className="topbar-links">
+          <a href="#services">Services</a>
+          <a href="#areas">Service area</a>
+          <a className="call-pill" href={`tel:${businessConfig.phone}`}>Call {businessConfig.phone}</a>
+        </div>
+      </div>
+      <div className="page-wrap" id="top">
         <noscript>
           <div
             className="rounded-2xl border p-4 mb-5 text-sm text-center"
@@ -196,34 +201,57 @@ export default function QuoteRequestPage() {
           </div>
         </noscript>
 
-        <header
-          className="rounded-2xl px-6 py-8 mb-5"
-          style={{ background: "var(--hero-bg)", color: "var(--hero-ink)" }}
-        >
-          <div
-            className="w-11 h-11 rounded-xl grid place-items-center font-display font-bold text-lg mb-5"
-            style={{ background: "var(--accent)", color: "var(--accent-ink)" }}
-            aria-hidden="true"
-          >
-            {businessConfig.markInitial}
+        <header className="hero-panel">
+          <div className="hero-copy">
+            <p className="eyebrow">Local exterior cleanup</p>
+            <h1>Your weekend belongs to <em>you.</em></h1>
+            <p className="hero-description">
+              Gutter cleaning, roof debris removal, and yard cleanup—handled by a local crew
+              serving western Wayne and Oakland counties.
+            </p>
+            <div className="hero-actions">
+              <a className="primary-link" href="#quote">Get a free quote <span>→</span></a>
+              <a className="text-link" href={`sms:${businessConfig.phone.replace(/\D/g, "")}`}>Text us</a>
+            </div>
           </div>
-          <p className="text-sm mb-1" style={{ color: "var(--hero-muted)" }}>
-            {businessConfig.name}
-          </p>
-          <h1 className="font-display text-3xl sm:text-4xl font-black leading-[1.05] mb-4">
-            Leaves are coming.
-            <br />
-            Get on the schedule.
-          </h1>
-          <ul className="flex flex-wrap gap-x-4 gap-y-1 text-sm" style={{ color: "var(--hero-muted)" }}>
+          <div className="hero-visual" aria-hidden="true">
+            <div className="sun-disc" />
+            <div className="house-art">
+              <div className="roof-art" />
+              <div className="home-body"><span /><i /></div>
+              <div className="ground-art" />
+            </div>
+            <div className="local-note"><strong>Local work.</strong><br />Done right.</div>
+          </div>
+          <ul className="hero-services">
             {SERVICE_OPTIONS.map((s) => (
-              <li key={s} className="flex items-center gap-1.5">
+              <li key={s}>
                 <ServiceIcon service={s} />
-                {SERVICE_LABELS[s]}
+                {s === "gutters" ? "Gutter cleaning" : s === "roof" ? "Roof debris" : "Yard cleanup"}
               </li>
             ))}
           </ul>
         </header>
+
+        <section className="services-showcase" id="services">
+          <div className="section-intro">
+            <p className="eyebrow">What we take off your list</p>
+            <h2>Simple jobs. Big relief.</h2>
+            <p>Tell us what needs attention. We’ll follow up to understand the property and firm up your quote.</p>
+          </div>
+          <div className="service-cards">
+            <article><ServiceIcon service="gutters" /><small>01</small><h3>Gutter cleaning</h3><p>Clear leaves and buildup so water can move where it should.</p><a href="#quote">Request this service →</a></article>
+            <article><ServiceIcon service="roof" /><small>02</small><h3>Roof debris removal</h3><p>Remove leaves, branches, and loose debris from your roof surface.</p><a href="#quote">Request this service →</a></article>
+            <article><ServiceIcon service="yard" /><small>03</small><h3>Yard & leaf cleanup</h3><p>Get seasonal leaves and yard debris gathered and cleared out.</p><a href="#quote">Request this service →</a></article>
+          </div>
+        </section>
+
+        <section className="area-band" id="areas">
+          <div><p className="eyebrow">Proudly serving your neighborhood</p><h2>Close by and ready to help.</h2></div>
+          <div className="city-grid">
+            {['Livonia', 'Farmington', 'Westland', 'Northville', 'Plymouth', 'Novi'].map((city) => <span key={city}>{city}</span>)}
+          </div>
+        </section>
 
         {missingSetup.length > 0 && (
           <div
@@ -235,20 +263,24 @@ export default function QuoteRequestPage() {
           </div>
         )}
 
+        <div className="quote-layout" id="quote">
+          <div className="quote-copy">
+            <p className="eyebrow">Free quote</p>
+            <h2>Let’s get it off your list.</h2>
+            <p>Share the basics and we’ll call or text you to talk through the work. It takes about a minute.</p>
+            <div className="direct-call"><span>Prefer to talk now?</span><a href={`tel:${businessConfig.phone}`}>{businessConfig.phone}</a><small>Call or text</small></div>
+          </div>
         <form
           onSubmit={handleSubmit}
           noValidate
-          className="rounded-2xl border p-6"
-          style={{ background: "var(--card)", borderColor: "var(--line)" }}
+          className="quote-form"
         >
-          <h2 className="font-display text-xl font-semibold mb-1">Request a quote</h2>
-          <p className="text-sm mb-5" style={{ color: "var(--muted)" }}>
-            Takes under a minute. We&apos;ll call you back to firm up the price.
-          </p>
+          <h2>Tell us about the job</h2>
+          <p className="form-lede">We’ll use this to prepare for the conversation.</p>
 
           <div className="mb-4">
             <label htmlFor="name" className="block text-sm font-semibold mb-1.5">
-              Name
+              Your name
             </label>
             <input
               id="name"
@@ -278,7 +310,7 @@ export default function QuoteRequestPage() {
               inputMode="tel"
               autoComplete="tel"
               required
-              placeholder="So we can call you back"
+              placeholder="(734) 555-0123"
               className="w-full px-3 py-2.5 rounded-lg border bg-transparent focus-ring"
               style={{ borderColor: "var(--line)" }}
               aria-invalid={Boolean(errors.phone)}
@@ -314,7 +346,7 @@ export default function QuoteRequestPage() {
 
           <div className="mb-4">
             <label htmlFor="address" className="block text-sm font-semibold mb-1.5">
-              Service address
+              Service address and city
             </label>
             <input
               id="address"
@@ -336,7 +368,7 @@ export default function QuoteRequestPage() {
 
           <fieldset className="mb-4">
             <legend className="block text-sm font-semibold mb-1.5">
-              Which service(s)?
+              What can we help with?
             </legend>
             {/* Stacked on phones: three across leaves ~2px for the label once
                 the checkbox and icon take their space. Three across from sm up. */}
@@ -345,7 +377,7 @@ export default function QuoteRequestPage() {
                 <label key={s} className="chip">
                   <input type="checkbox" name="services" value={s} />
                   <ServiceIcon service={s} />
-                  <span className="text-sm font-medium">{SERVICE_LABELS[s]}</span>
+                  <span className="text-sm font-medium">{s === "gutters" ? "Gutter cleaning" : s === "roof" ? "Roof debris" : "Yard cleanup"}</span>
                 </label>
               ))}
             </div>
@@ -450,15 +482,22 @@ export default function QuoteRequestPage() {
             className="w-full py-3 rounded-lg font-semibold disabled:opacity-60"
             style={{ background: "var(--accent)", color: "var(--accent-ink)" }}
           >
-            {status === "submitting" ? "Sending…" : "Request my quote"}
+            {status === "submitting" ? "Sending…" : "Request my free quote"}
           </button>
+          <p className="form-note">No pressure. Just a straightforward conversation about the work.</p>
         </form>
+        </div>
 
         <footer className="text-center text-sm mt-5 mb-6" style={{ color: "var(--muted)" }}>
           {hasPhone() && <a className="focus-ring" href={`tel:${businessConfig.phone}`}>{businessConfig.phone}</a>}
           {hasPhone() && hasEmail() && <span> · </span>}
           {hasEmail() && <a className="focus-ring" href={`mailto:${businessConfig.email}`}>{businessConfig.email}</a>}
         </footer>
+      </div>
+      <div className="mobile-actions">
+        <a href={`tel:${businessConfig.phone}`}>Call</a>
+        <a href={`sms:${businessConfig.phone.replace(/\D/g, "")}`}>Text</a>
+        <a href="#quote">Free quote</a>
       </div>
     </main>
   );
