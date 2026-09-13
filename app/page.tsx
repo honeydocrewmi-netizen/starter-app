@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, type FormEvent } from "react";
 import {
   businessConfig,
@@ -181,7 +182,7 @@ export default function QuoteRequestPage() {
     <main className="site-shell">
       <div className="topbar">
         <a className="wordmark" href="#top" aria-label="HoneyDo Crew home">
-          <span className="wordmark-icon" aria-hidden="true">H</span>
+          <Image className="wordmark-logo" src="/honeydo-bee-logo.png" alt="" width={1402} height={1122} />
           <span><strong>HoneyDo</strong><small>Crew</small></span>
         </a>
         <div className="topbar-links">
@@ -214,14 +215,8 @@ export default function QuoteRequestPage() {
               <a className="text-link" href={`sms:${businessConfig.phone.replace(/\D/g, "")}`}>Text us</a>
             </div>
           </div>
-          <div className="hero-visual" aria-hidden="true">
-            <div className="sun-disc" />
-            <div className="house-art">
-              <div className="roof-art" />
-              <div className="home-body"><span /><i /></div>
-              <div className="ground-art" />
-            </div>
-            <div className="local-note"><strong>Local work.</strong><br />Done right.</div>
+          <div className="hero-visual">
+            <Image className="hero-logo" src="/honeydo-bee-logo.png" alt="HoneyDo Crew bee carrying tools. Ready to tackle your honey-do list." width={1402} height={1122} preload />
           </div>
           <ul className="hero-services">
             {SERVICE_OPTIONS.map((s) => (
