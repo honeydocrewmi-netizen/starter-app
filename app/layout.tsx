@@ -16,8 +16,8 @@ const bodyFont = Public_Sans({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://honeydocrewservices.com"),
-  title: `${businessConfig.name} | Gutter, Roof & Yard Cleanup`,
-  description: "Gutter cleaning, roof debris removal, and yard cleanup in Livonia, Farmington, Westland, Northville, Plymouth, and Novi.",
+  title: `${businessConfig.name} | Fall Leaf Cleanup`,
+  description: "Fall leaf cleanup for gutters, roofs, and yards in Livonia, Farmington, Westland, Northville, Plymouth, and Novi. Get a free quote from HoneyDo Crew.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

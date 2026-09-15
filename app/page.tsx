@@ -41,6 +41,15 @@ const URGENCY_LABELS: Record<(typeof URGENCY_OPTIONS)[number], string> = {
   "just-pricing": "Just checking prices",
 };
 
+function FallLeaf({ className = "" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 80 90" fill="none" aria-hidden="true">
+      <path d="m40 3 10 19 10-7-2 21 17-3-8 16 9 5-24 15-10-1-2 15-4-1 1-15-10 2L4 54l9-5-8-16 18 3-3-21 11 7Z" fill="currentColor" />
+      <path d="M40 24v43M25 40l15 15 15-15M19 54l21 8 21-8" stroke="var(--hero-bg)" strokeOpacity=".28" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function ServiceIcon({ service }: { service: Service }) {
   if (service === "gutters") {
     return (
@@ -203,12 +212,18 @@ export default function QuoteRequestPage() {
         </noscript>
 
         <header className="hero-panel">
+          <div className="fall-scatter" aria-hidden="true">
+            <FallLeaf className="fall-leaf leaf-one" />
+            <FallLeaf className="fall-leaf leaf-two" />
+            <FallLeaf className="fall-leaf leaf-three" />
+            <FallLeaf className="fall-leaf leaf-four" />
+          </div>
           <div className="hero-copy">
-            <p className="eyebrow">Local exterior cleanup</p>
-            <h1>Your weekend belongs to <em>you.</em></h1>
+            <p className="eyebrow fall-badge"><FallLeaf /> Fall leaf cleanup</p>
+            <h1>Love the fall.<br /><em>Leave the leaves.</em></h1>
             <p className="hero-description">
-              Gutter cleaning, roof debris removal, and yard cleanup—handled by a local crew
-              serving western Wayne and Oakland counties.
+              Leaves in the gutters, on the roof, or all over the yard? HoneyDo Crew
+              helps clear them out so you can get back to enjoying your fall weekend.
             </p>
             <div className="hero-actions">
               <a className="primary-link" href="#quote">Get a free quote <span>→</span></a>
@@ -222,22 +237,28 @@ export default function QuoteRequestPage() {
             {SERVICE_OPTIONS.map((s) => (
               <li key={s}>
                 <ServiceIcon service={s} />
-                {s === "gutters" ? "Gutter cleaning" : s === "roof" ? "Roof debris" : "Yard cleanup"}
+                {s === "gutters" ? "Gutter leaves" : s === "roof" ? "Roof leaves" : "Yard leaves"}
               </li>
             ))}
           </ul>
         </header>
 
+        <div className="fall-ribbon">
+          <FallLeaf />
+          <p>Less raking. <strong>More fall weekends.</strong></p>
+          <FallLeaf />
+        </div>
+
         <section className="services-showcase" id="services">
           <div className="section-intro">
-            <p className="eyebrow">What we take off your list</p>
-            <h2>Simple jobs. Big relief.</h2>
-            <p>Tell us what needs attention. We’ll follow up to understand the property and firm up your quote.</p>
+            <p className="eyebrow">Your fall cleanup crew</p>
+            <h2>Three places.<br />One less chore.</h2>
+            <p>We’re focused on leaves this fall. Pick the areas that need attention and we’ll talk through the cleanup and your quote.</p>
           </div>
           <div className="service-cards">
-            <article><ServiceIcon service="gutters" /><small>01</small><h3>Gutter cleaning</h3><p>Clear leaves and buildup so water can move where it should.</p><a href="#quote">Request this service →</a></article>
-            <article><ServiceIcon service="roof" /><small>02</small><h3>Roof debris removal</h3><p>Remove leaves, branches, and loose debris from your roof surface.</p><a href="#quote">Request this service →</a></article>
-            <article><ServiceIcon service="yard" /><small>03</small><h3>Yard & leaf cleanup</h3><p>Get seasonal leaves and yard debris gathered and cleared out.</p><a href="#quote">Request this service →</a></article>
+            <article><ServiceIcon service="gutters" /><small>01</small><h3>Leaves in the gutters</h3><p>Clear out fallen leaves and seasonal buildup so water can flow through your gutters.</p><a href="#quote">Get a gutter cleanup quote →</a></article>
+            <article><ServiceIcon service="roof" /><small>02</small><h3>Leaves on the roof</h3><p>Have leaves collecting on your roof? Tell us about your home and we’ll discuss the cleanup.</p><a href="#quote">Get a roof cleanup quote →</a></article>
+            <article><ServiceIcon service="yard" /><small>03</small><h3>Leaves across the yard</h3><p>Take the leaf-covered lawn off your weekend list. We’ll help get those fallen leaves gathered and cleared.</p><a href="#quote">Get a yard cleanup quote →</a></article>
           </div>
         </section>
 
@@ -260,9 +281,9 @@ export default function QuoteRequestPage() {
 
         <div className="quote-layout" id="quote">
           <div className="quote-copy">
-            <p className="eyebrow">Free quote</p>
-            <h2>Let’s get it off your list.</h2>
-            <p>Share the basics and we’ll call or text you to talk through the work. It takes about a minute.</p>
+            <p className="eyebrow">Free fall cleanup quote</p>
+            <h2>Leave the leaf pile to us.</h2>
+            <p>Share where the leaves are collecting and we’ll call or text to talk through your fall cleanup. It takes about a minute.</p>
             <div className="direct-call"><span>Prefer to talk now?</span><a href={`tel:${businessConfig.phone}`}>{businessConfig.phone}</a><small>Call or text</small></div>
           </div>
         <form
@@ -270,7 +291,7 @@ export default function QuoteRequestPage() {
           noValidate
           className="quote-form"
         >
-          <h2>Tell us about the job</h2>
+          <h2>Tell us about your leaf cleanup</h2>
           <p className="form-lede">We’ll use this to prepare for the conversation.</p>
 
           <div className="mb-4">
@@ -372,7 +393,7 @@ export default function QuoteRequestPage() {
                 <label key={s} className="chip">
                   <input type="checkbox" name="services" value={s} />
                   <ServiceIcon service={s} />
-                  <span className="text-sm font-medium">{s === "gutters" ? "Gutter cleaning" : s === "roof" ? "Roof debris" : "Yard cleanup"}</span>
+                  <span className="text-sm font-medium">{s === "gutters" ? "Gutter leaves" : s === "roof" ? "Roof leaves" : "Yard leaves"}</span>
                 </label>
               ))}
             </div>
