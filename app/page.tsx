@@ -237,7 +237,7 @@ export default function QuoteRequestPage() {
             {SERVICE_OPTIONS.map((s) => (
               <li key={s}>
                 <ServiceIcon service={s} />
-                {s === "gutters" ? "Gutter leaves" : s === "roof" ? "Roof leaves" : "Yard leaves"}
+                {s === "gutters" ? "Gutter cleanup" : s === "roof" ? "Roof cleanup" : "Yard cleanup"}
               </li>
             ))}
           </ul>
@@ -393,7 +393,7 @@ export default function QuoteRequestPage() {
                 <label key={s} className="chip">
                   <input type="checkbox" name="services" value={s} />
                   <ServiceIcon service={s} />
-                  <span className="text-sm font-medium">{s === "gutters" ? "Gutter leaves" : s === "roof" ? "Roof leaves" : "Yard leaves"}</span>
+                  <span className="text-sm font-medium">{s === "gutters" ? "Gutter cleanup" : s === "roof" ? "Roof cleanup" : "Yard cleanup"}</span>
                 </label>
               ))}
             </div>
