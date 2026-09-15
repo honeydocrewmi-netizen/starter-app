@@ -256,9 +256,9 @@ export default function QuoteRequestPage() {
             <p>We’re focused on leaves this fall. Pick the areas that need attention and we’ll talk through the cleanup and your quote.</p>
           </div>
           <div className="service-cards">
-            <article><ServiceIcon service="gutters" /><small>01</small><h3>Leaves in the gutters</h3><p>Clear out fallen leaves and seasonal buildup so water can flow through your gutters.</p><a href="#quote">Get a gutter cleanup quote →</a></article>
-            <article><ServiceIcon service="roof" /><small>02</small><h3>Leaves on the roof</h3><p>Have leaves collecting on your roof? Tell us about your home and we’ll discuss the cleanup.</p><a href="#quote">Get a roof cleanup quote →</a></article>
-            <article><ServiceIcon service="yard" /><small>03</small><h3>Leaves across the yard</h3><p>Take the leaf-covered lawn off your weekend list. We’ll help get those fallen leaves gathered and cleared.</p><a href="#quote">Get a yard cleanup quote →</a></article>
+            <article><ServiceIcon service="gutters" /><small>01</small><h3>Gutter cleanup</h3><p>Clear out fallen leaves and seasonal buildup so water can flow through your gutters.</p><a href="#quote">Get a gutter cleanup quote →</a></article>
+            <article><ServiceIcon service="roof" /><small>02</small><h3>Roof cleanup</h3><p>Have leaves collecting on your roof? Tell us about your home and we’ll discuss the cleanup.</p><a href="#quote">Get a roof cleanup quote →</a></article>
+            <article><ServiceIcon service="yard" /><small>03</small><h3>Yard cleanup</h3><p>Take the leaf-covered lawn off your weekend list. We’ll help get those fallen leaves gathered and cleared.</p><a href="#quote">Get a yard cleanup quote →</a></article>
           </div>
         </section>
 
