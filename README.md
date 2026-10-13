@@ -1,6 +1,6 @@
 # Current owner setup
 
-The app now targets the owner’s Supabase project `cqvsrrbsmvuecwjyggud`.
+The app now targets the owner’s Supabase project `azxzulkusijmtjlacraf`.
 Submissions are saved in `public.submissions` and trigger email notifications to
 `honeydocrewmi@gmail.com`. See [notification setup and operations](supabase/NOTIFICATIONS.md)
 for deployment, secrets, verification, and delivery limitations.

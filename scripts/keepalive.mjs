@@ -30,8 +30,16 @@ try {
   // back as a permission-denied error — that's fine. The request reaching
   // Postgres is what counts as "activity" to Supabase; it doesn't need to
   // succeed, only to happen.
-  await supabase.from("submissions").select("id", { count: "exact", head: true });
-  console.log("keepalive: request reached Supabase.");
+  //
+  // supabase-js does NOT throw on network failure: a DNS miss or refused
+  // connection comes back as status 0 with "fetch failed". Without this
+  // check the script logged success for weeks against a project that no
+  // longer existed.
+  const { status, error } = await supabase
+    .from("submissions")
+    .select("id", { count: "exact", head: true });
+  if (!status) throw error ?? new Error("no HTTP response");
+  console.log(`keepalive: request reached Supabase (HTTP ${status}).`);
 } catch (err) {
   console.error("keepalive: request did not reach Supabase:", err);
   process.exit(1);

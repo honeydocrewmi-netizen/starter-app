@@ -18,7 +18,7 @@ begin
     return new;
   end if;
   perform net.http_post(
-    url := 'https://cqvsrrbsmvuecwjyggud.supabase.co/functions/v1/notify-submission',
+    url := 'https://azxzulkusijmtjlacraf.supabase.co/functions/v1/notify-submission',
     headers := jsonb_build_object('Content-Type', 'application/json', 'x-webhook-secret', webhook_secret),
     body := jsonb_build_object('type', 'INSERT', 'schema', 'public', 'table', 'submissions', 'record', to_jsonb(new)),
     timeout_milliseconds := 20000

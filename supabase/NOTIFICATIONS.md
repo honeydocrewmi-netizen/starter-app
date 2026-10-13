@@ -1,6 +1,6 @@
 # Owner project and quote notifications
 
-Project: cqvsrrbsmvuecwjyggud
+Project: azxzulkusijmtjlacraf
 Recipient: honeydocrewmi@gmail.com
 
 The site saves submissions directly to the owner's database. An insert trigger
@@ -12,12 +12,12 @@ valid, becomes Reply-To; it never controls the notification recipient.
 ## Deployment
 
 1. Sign into the owner account using `/opt/homebrew/bin/supabase login`.
-2. Link: `supabase link --project-ref cqvsrrbsmvuecwjyggud`.
+2. Link: `supabase link --project-ref azxzulkusijmtjlacraf`.
 3. Set function secrets using the ignored local file:
-   `supabase secrets set --env-file supabase/.env.notifications.local --project-ref cqvsrrbsmvuecwjyggud`.
+   `supabase secrets set --env-file supabase/.env.notifications.local --project-ref azxzulkusijmtjlacraf`.
 4. Store the same NOTIFICATION_WEBHOOK_SECRET value in Supabase Vault with name
    `notification_webhook_secret`. Never commit either secret to Git.
-5. Deploy: `supabase functions deploy notify-submission --project-ref cqvsrrbsmvuecwjyggud --use-api`.
+5. Deploy: `supabase functions deploy notify-submission --project-ref azxzulkusijmtjlacraf --use-api`.
 6. Apply migrations: `supabase db push` (review target and migration list first).
 7. Deploy the site through its existing GitHub Pages workflow.
 8. Submit a clearly labeled test request and confirm both its saved database row
